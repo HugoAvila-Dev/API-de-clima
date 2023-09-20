@@ -47,16 +47,45 @@ function mostrarError(mensaje) {
 
 function consultarAPI(ciudad, pais) {
 
-    const appId = 'c7c3263dd9278231f38a1cfda956a8f8';
+    const appId = API_KEY;
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${appId}`
 
     fetch(url) 
         .then(respuesta => respuesta.json())
         .then(datos => {
-            console.log(datos)
+
+            limpiarHTML(); //Limpiar el HTML previo
+
             if(datos.cod === '404') {
                 mostrarError('Ciudad no encotrada');
+                return;
             }
-        })
 
+            //Imprime la respuesta en el HTML
+            mostrarClima(datos);
+        })
+}
+
+function mostrarClima(datos) {
+
+    const { main: { temp, temp_max, temp_min }} = datos;
+
+    const centigrados = temp - 273.15;
+    
+    const actual = document.createElement('p');
+    actual.innerHTML = `${centigrados} &#8451`;
+    actual.classList.add('font-bold', 'text-6xl');
+
+    const resultadoDiv = document.createElement('div');
+    resultadoDiv.classList.add('text-center', 'text-white');
+    resultadoDiv.appendChild(actual);
+
+    resultado.appendChild(resultadoDiv);
+}
+
+
+function limpiarHTML() {
+    while(resultado.firstChild){
+        resultado.removeChild(resultado.firstChild)
+    }
 }
